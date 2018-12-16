@@ -1,7 +1,5 @@
 package dev.Kdice;
 
-// A simple Client Server Protocol .. Client for Echo Server
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,17 +13,17 @@ public class Client {
 
 
         InetAddress address = InetAddress.getLocalHost();
-        Socket s1 = null;
+        Socket socket = null;
         String line = null;
-        BufferedReader br = null;
-        BufferedReader is = null;
-        PrintWriter os = null;
+        BufferedReader buffReader = null;
+        BufferedReader inputStream = null;
+        PrintWriter outputStream = null;
 
         try {
-            s1 = new Socket(address, 4445); // You can use static final constant PORT_NUM
-            br = new BufferedReader(new InputStreamReader(System.in));
-            is = new BufferedReader(new InputStreamReader(s1.getInputStream()));
-            os = new PrintWriter(s1.getOutputStream());
+            socket = new Socket(address, 4445); // You can use static final constant PORT_NUM
+            buffReader = new BufferedReader(new InputStreamReader(System.in));
+            inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            outputStream = new PrintWriter(socket.getOutputStream());
         } catch (IOException e) {
             e.printStackTrace();
             System.err.print("IO Exception");
@@ -36,13 +34,13 @@ public class Client {
 
         String response = null;
         try {
-            line = br.readLine();
+            line = buffReader.readLine();
             while (line.compareTo("QUIT") != 0) {
-                os.println(line);
-                os.flush();
-                response = is.readLine();
+                outputStream.println(line);
+                outputStream.flush();
+                response = inputStream.readLine();
                 System.out.println("Server Response : " + response);
-                line = br.readLine();
+                line = buffReader.readLine();
 
             }
 
@@ -52,10 +50,10 @@ public class Client {
             System.out.println("Socket read Error");
         } finally {
 
-            is.close();
-            os.close();
-            br.close();
-            s1.close();
+            inputStream.close();
+            outputStream.close();
+            buffReader.close();
+            socket.close();
             System.out.println("Connection Closed");
 
         }

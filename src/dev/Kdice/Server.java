@@ -1,6 +1,5 @@
 package dev.Kdice;
 
-// echo server
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,11 +12,11 @@ public class Server {
     public static void main(String args[]){
 
 
-        Socket s=null;
-        ServerSocket ss2=null;
+        Socket socket=null;
+        ServerSocket serverSocket=null;
         System.out.println("Server Listening......");
         try{
-            ss2 = new ServerSocket(4445); // can also use static final PORT_NUM , when defined
+            serverSocket = new ServerSocket(4445); // can also use static final PORT_NUM , when defined
 
         }
         catch(IOException e){
@@ -28,9 +27,9 @@ public class Server {
 
         while(true){
             try{
-                s= ss2.accept();
+                socket = serverSocket.accept();
                 System.out.println("connection Established");
-                ServerThread st=new ServerThread(s);
+                ServerThread st=new ServerThread(socket);
                 st.start();
 
             }
@@ -48,32 +47,32 @@ public class Server {
 
 class ServerThread extends Thread{
 
-    String line=null;
-    BufferedReader  is = null;
-    PrintWriter os=null;
-    Socket s=null;
+    String line = null;
+    BufferedReader  inputStream = null;
+    PrintWriter outputStream = null;
+    Socket socket=null;
 
-    public ServerThread(Socket s){
-        this.s=s;
+    public ServerThread(Socket socket){
+        this.socket=socket;
     }
 
     public void run() {
         try{
-            is= new BufferedReader(new InputStreamReader(s.getInputStream()));
-            os=new PrintWriter(s.getOutputStream());
+            inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            outputStream = new PrintWriter(socket.getOutputStream());
 
         }catch(IOException e){
             System.out.println("IO error in server thread");
         }
 
         try {
-            line=is.readLine();
+            line=inputStream.readLine();
             while(line.compareTo("QUIT")!=0){
 
-                os.println(line);
-                os.flush();
+                outputStream.println(line);
+                outputStream.flush();
                 System.out.println("Response to Client  :  "+line);
-                line=is.readLine();
+                line=inputStream.readLine();
             }
         } catch (IOException e) {
 
@@ -88,17 +87,17 @@ class ServerThread extends Thread{
         finally{
             try{
                 System.out.println("Connection Closing..");
-                if (is!=null){
-                    is.close();
+                if (inputStream!=null){
+                    inputStream.close();
                     System.out.println(" Socket Input Stream Closed");
                 }
 
-                if(os!=null){
-                    os.close();
+                if(outputStream!=null){
+                    outputStream.close();
                     System.out.println("Socket Out Closed");
                 }
-                if (s!=null){
-                    s.close();
+                if (socket!=null){
+                    socket.close();
                     System.out.println("Socket Closed");
                 }
 
