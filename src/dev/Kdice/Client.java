@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Client {
 
@@ -29,10 +30,19 @@ public class Client {
             System.err.print("IO Exception");
         }
 
-
+        //Receiving a welcome message
         System.out.println(inputStream.readLine());
+        //login
+        try {
+            line = "LOGIN gamer"+ ThreadLocalRandom.current().nextInt(100, 900)+"\n";
+            outputStream.println(line);
+            outputStream.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        /* Wysyłanie stringa do serwera
+
+        /*
         String response = null;
         try {
             line = buffReader.readLine();
@@ -40,23 +50,18 @@ public class Client {
                 outputStream.println(line);
                 outputStream.flush();
                 response = inputStream.readLine();
-                System.out.println("Server Response : " + response);
+                System.out.println(response);
                 line = buffReader.readLine();
-
             }
-
-
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Socket read Error");
         } finally {
-
             inputStream.close();
             outputStream.close();
             buffReader.close();
             socket.close();
             System.out.println("Connection Closed");
-
         }
         */
     }
