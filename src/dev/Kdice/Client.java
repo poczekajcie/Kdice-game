@@ -29,9 +29,10 @@ public class Client {
             System.err.print("IO Exception");
         }
 
-        System.out.println("Client Address : " + address);
-        System.out.println("Enter Data to echo Server ( Enter QUIT to end):");
 
+        System.out.println(inputStream.readLine());
+
+        /* Wysyłanie stringa do serwera
         String response = null;
         try {
             line = buffReader.readLine();
@@ -57,7 +58,7 @@ public class Client {
             System.out.println("Connection Closed");
 
         }
-
+        */
     }
 }
 
