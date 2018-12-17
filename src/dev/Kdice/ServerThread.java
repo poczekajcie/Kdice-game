@@ -14,7 +14,7 @@ public class ServerThread extends Thread {
     Socket socket = null;
 
     public ServerThread(Socket socket){
-        this.socket=socket;
+        this.socket = socket;
     }
 
     public void run() {
@@ -29,9 +29,9 @@ public class ServerThread extends Thread {
         outputStream.println("POLACZONO");
         outputStream.flush();
 
-        //Receiving a messages
+        //Loging
         try {
-            line=inputStream.readLine();
+            line = inputStream.readLine();
             if (line.startsWith("LOGIN")) {
                 String[] output = line.split(" ");
                 login = output[1];
@@ -40,5 +40,42 @@ public class ServerThread extends Thread {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        //Waiting for all players
+        while (!Game.isAllPlayers()) {
+
+        }
+        try {
+            line = "START "+Game.findPlayerId(login)+" 1";
+            outputStream.println(line);
+            outputStream.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        if (Game.thread == Game.findPlayerId(login)) {
+            Game.setPlayers();
+            while (Game.thread<6) {
+                Game.thread = Game.thread+1;
+            }
+            Game.playersready = true;
+        }
+
+
+        //Return map
+        if (Game.playersready) {
+            for (int i=0; i<Game.map.length; i++) {
+                line = "PLANSZA "+i+" "+Game.map[i].getOwnerId()+" "+Game.map[i].getCubes();
+                System.out.println(line);
+                try {
+                    outputStream.println(line);
+                    outputStream.flush();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
     }
 }

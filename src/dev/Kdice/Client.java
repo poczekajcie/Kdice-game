@@ -20,8 +20,9 @@ public class Client {
         BufferedReader inputStream = null;
         PrintWriter outputStream = null;
 
+        //Connect with server
         try {
-            socket = new Socket(address, 4445); // You can use static final constant PORT_NUM
+            socket = new Socket(address, 4445);
             buffReader = new BufferedReader(new InputStreamReader(System.in));
             inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             outputStream = new PrintWriter(socket.getOutputStream());
@@ -31,39 +32,38 @@ public class Client {
         }
 
         //Receiving a welcome message
-        System.out.println(inputStream.readLine());
-        //login
         try {
-            line = "LOGIN gamer"+ ThreadLocalRandom.current().nextInt(100, 900)+"\n";
+            System.out.println(inputStream.readLine());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //Login
+        try {
+            line = "LOGIN guest"+ ThreadLocalRandom.current().nextInt(100, 900);
+            System.out.println(line);
             outputStream.println(line);
             outputStream.flush();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-
-        /*
-        String response = null;
+        //Start
         try {
-            line = buffReader.readLine();
-            while (line.compareTo("QUIT") != 0) {
-                outputStream.println(line);
-                outputStream.flush();
-                response = inputStream.readLine();
-                System.out.println(response);
-                line = buffReader.readLine();
-            }
-        } catch (IOException e) {
+            System.out.println(inputStream.readLine());
+        } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Socket read Error");
-        } finally {
-            inputStream.close();
-            outputStream.close();
-            buffReader.close();
-            socket.close();
-            System.out.println("Connection Closed");
         }
-        */
+
+        //Receiving a map
+        for (int i=0; i<Game.map.length; i++) {
+            try {
+                System.out.println(inputStream.readLine());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 }
 

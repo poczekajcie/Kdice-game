@@ -3,7 +3,7 @@ package dev.Kdice;
 public class Field {
     private int cubes, ownerId;
 
-    public Field() {}
+    public Field() { cubes =0; ownerId = 99;}
     public Field(int cubes, int ownerId) {
         this.cubes = cubes;
         this.ownerId = ownerId;

@@ -17,7 +17,9 @@ public class Server {
             System.out.println("Server error");
         }
 
+        //Create game
         new Game();
+
         //Creating a thread for every client
         while(true){
             try{
@@ -29,6 +31,7 @@ public class Server {
                 System.out.println("Connection Error");
             }
         }
+
     }
 }
 
