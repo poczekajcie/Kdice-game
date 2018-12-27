@@ -5,7 +5,6 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Game {
     public static Player players[] = new Player[6];
     public static Field map[] = new Field[25];
-    public static int thread = 1;
     public static boolean playersready = false;
 
 
@@ -22,7 +21,7 @@ public class Game {
         }
     }
 
-    public static void loging(String login) {
+    public static void signUp(String login) {
         int i=1;
         while (players[i].getLogin() != null) {
             i+=1;
@@ -34,7 +33,7 @@ public class Game {
     public static int findPlayerId(String login) {
         int id=0;
         for (int i=1; i<players.length; i++) {
-            if (players[i].getLogin() == login) {
+            if (players[i].getLogin().equals(login)) {
                 id = i;
             }
         }
@@ -52,44 +51,43 @@ public class Game {
     }
 
     public static void setPlayers() {
-        //Set players on map
         for (int i=1; i<players.length; i++) {
-            int startingfield = 0;
-            int nextfield = startingfield+5;
-            while (map[startingfield].getOwnerId() != 99) {
+            int startingField = 0;
+            int nextField = startingField+5;
+            while (map[startingField].getOwnerId() != 99) {
                 int position = ThreadLocalRandom.current().nextInt(2,6);
                 switch (position) {
                     case 2:
-                        startingfield = 3;
-                        nextfield = startingfield+1;
+                        startingField = 3;
+                        nextField = startingField+1;
                         break;
                     case 3:
-                        startingfield = 11;
-                        nextfield = startingfield+1;
+                        startingField = 11;
+                        nextField = startingField+1;
                         break;
                     case 4:
-                        startingfield = 20;
-                        nextfield = startingfield+1;
+                        startingField = 20;
+                        nextField = startingField+1;
                         break;
                     case 5:
-                        startingfield = 19;
-                        nextfield = startingfield+5;
+                        startingField = 19;
+                        nextField = startingField+5;
                         break;
                 }
             }
 
-            map[startingfield].setOwnerId(i);
-            map[nextfield].setOwnerId(i);
+            map[startingField].setOwnerId(i);
+            map[nextField].setOwnerId(i);
         }
 
         //Set cubes for players
         //Inactive player take remaining fields
-        for (int i=0; i<map.length; i++) {
-            if (map[i].getOwnerId() != 99) {
-                map[i].setCubes(2);
+        for (Field aMap : map) {
+            if (aMap.getOwnerId() != 99) {
+                aMap.setCubes(2);
             } else {
-                map[i].setOwnerId(0);
-                map[i].setCubes(ThreadLocalRandom.current().nextInt(1,6));
+                aMap.setOwnerId(0);
+                aMap.setCubes(ThreadLocalRandom.current().nextInt(1, 6));
             }
         }
 

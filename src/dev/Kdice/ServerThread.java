@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import static java.lang.Thread.*;
+
 public class ServerThread extends Thread {
     String line = null;
     String login = null;
@@ -26,16 +28,20 @@ public class ServerThread extends Thread {
         }
 
         //Send a welcome message
-        outputStream.println("POLACZONO");
-        outputStream.flush();
+        try {
+            outputStream.println("POLACZONO");
+            outputStream.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        //Loging
+        //Login
         try {
             line = inputStream.readLine();
             if (line.startsWith("LOGIN")) {
                 String[] output = line.split(" ");
                 login = output[1];
-                Game.loging(login);
+                Game.signUp(login);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -45,29 +51,28 @@ public class ServerThread extends Thread {
         while (!Game.isAllPlayers()) {
 
         }
+
+        //Sending message about start
         try {
-            line = "START "+Game.findPlayerId(login)+" 1";
+            line = "START "+ Game.findPlayerId(login)+" 1";
             outputStream.println(line);
             outputStream.flush();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-
-        if (Game.thread == Game.findPlayerId(login)) {
-            Game.setPlayers();
-            while (Game.thread<6) {
-                Game.thread = Game.thread+1;
-            }
-            Game.playersready = true;
+        //Sending map length
+        try {
+            outputStream.print(Game.map.length);
+            outputStream.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-
-        //Return map
+        //Sending map
         if (Game.playersready) {
-            for (int i=0; i<Game.map.length; i++) {
-                line = "PLANSZA "+i+" "+Game.map[i].getOwnerId()+" "+Game.map[i].getCubes();
-                System.out.println(line);
+            for (int i = 0; i< Game.map.length; i++) {
+                line = "PLANSZA "+i+" "+ Game.map[i].getOwnerId()+" "+ Game.map[i].getCubes();
                 try {
                     outputStream.println(line);
                     outputStream.flush();
@@ -76,6 +81,7 @@ public class ServerThread extends Thread {
                 }
             }
         }
+
 
     }
 }

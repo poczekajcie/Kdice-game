@@ -11,19 +11,15 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Client {
 
     public static void main(String args[]) throws IOException {
-
-
         InetAddress address = InetAddress.getLocalHost();
         Socket socket = null;
         String line = null;
-        BufferedReader buffReader = null;
         BufferedReader inputStream = null;
         PrintWriter outputStream = null;
 
         //Connect with server
         try {
             socket = new Socket(address, 4445);
-            buffReader = new BufferedReader(new InputStreamReader(System.in));
             inputStream = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             outputStream = new PrintWriter(socket.getOutputStream());
         } catch (IOException e) {
@@ -55,14 +51,18 @@ public class Client {
             e.printStackTrace();
         }
 
+        //Receiving a map length for loop
+        int mapLength = inputStream.read();
+
         //Receiving a map
-        for (int i=0; i<Game.map.length; i++) {
+        for (int i=0; i<mapLength; i++) {
             try {
                 System.out.println(inputStream.readLine());
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
 
     }
 }

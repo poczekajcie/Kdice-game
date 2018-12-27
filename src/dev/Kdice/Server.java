@@ -5,11 +5,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
-    public static void main(String args[]){
 
+    public static Game game = new Game();
+
+    public static void main(String args[]){
         //Creating server
         Socket socket=null;
         ServerSocket serverSocket=null;
+
         try{
             serverSocket = new ServerSocket(4445);
         } catch(IOException e){
@@ -17,21 +20,29 @@ public class Server {
             System.out.println("Server error");
         }
 
-        //Create game
-        new Game();
-
         //Creating a thread for every client
-        while(true){
+        int clientsCount=0;
+        while(clientsCount!=5){
             try{
                 socket = serverSocket.accept();
                 ServerThread st=new ServerThread(socket);
                 st.start();
+                clientsCount++;
             } catch(Exception e){
                 e.printStackTrace();
                 System.out.println("Connection Error");
             }
         }
 
+        //Set players
+        Game.setPlayers();
+        Game.playersready = true;
+        for (int i = 0; i< Game.map.length; i++) {
+            System.out.println("PLANSZA "+i+" "+ Game.map[i].getOwnerId()+" "+ Game.map[i].getCubes());
+        }
+        while(true) {
+
+        }
     }
 }
 
