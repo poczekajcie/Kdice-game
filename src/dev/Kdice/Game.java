@@ -5,7 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Game {
     public static Player players[] = new Player[6];
     public static Field map[] = new Field[25];
-    public static boolean playersready = false;
+    public static boolean playersReady = false;
 
 
     public Game() {
@@ -90,6 +90,10 @@ public class Game {
                 aMap.setCubes(ThreadLocalRandom.current().nextInt(1, 6));
             }
         }
+    }
 
+    public static String attack(String str) {
+        String result = "";
+        return result;
     }
 }

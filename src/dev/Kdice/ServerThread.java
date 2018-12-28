@@ -70,9 +70,9 @@ public class ServerThread extends Thread {
         }
 
         //Sending map
-        if (Game.playersready) {
+        if (Game.playersReady) {
             for (int i = 0; i< Game.map.length; i++) {
-                line = "PLANSZA "+i+" "+ Game.map[i].getOwnerId()+" "+ Game.map[i].getCubes();
+                line = "PLANSZA "+i+" "+Game.map[i].getOwnerId()+" "+Game.map[i].getCubes();
                 try {
                     outputStream.println(line);
                     outputStream.flush();
@@ -82,6 +82,27 @@ public class ServerThread extends Thread {
             }
         }
 
+        //Let the game begin
+        boolean pass = false;
+
+        while(Server.bigRound!=11) {
+            while (Server.smallRound != 101) {
+                //Waiting for turn
+                while (Server.idPlayerTurn != Game.findPlayerId(login)) {
+
+                }
+                // Attacking
+                while (!pass) {
+
+                    //Action will be here
+                    line = Game.attack("smth");
+
+                }
+
+                pass = true;
+                Server.roundDone = true;
+            }
+        }
 
     }
 }
