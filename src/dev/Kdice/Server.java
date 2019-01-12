@@ -7,8 +7,20 @@ import java.net.Socket;
 public class Server {
 
     public static Game game = new Game();
-    public static int idPlayerTurn = 1, bigRound = 1, smallRound = 1;
-    public static boolean roundDone = false;
+    public static int idPlayerTurn, bigRound, smallRound;
+    public static volatile boolean roundDone = false, bigRoundsDone = false, smallRoundsDone = false, allPlayersDone=false;
+    public static String message = "Czekaj na swoją kolej";
+
+    public static int getBigRound () {
+        return bigRound;
+    }
+    public static int getSmallRound () {
+        return smallRound;
+    }
+    public static int getIdPlayerTurn () {
+        return idPlayerTurn;
+    }
+
 
     public static void main(String args[]){
         //Creating server
@@ -46,19 +58,27 @@ public class Server {
         //Let the game begin
         int playersInGame = Game.players.length-1;
 
-        while(bigRound!=11) {
-            while(smallRound!=101) {
-                for (int i=0; i<playersInGame; i++) {
+        //do 11
+        for (bigRound=1; bigRound<=2; bigRound++ ) {
+            //do 101
+            smallRoundsDone = false;
+            for (smallRound=1; smallRound<=3; smallRound++) {
+                allPlayersDone = false;
+                for (idPlayerTurn=1; idPlayerTurn<=playersInGame; idPlayerTurn++) {
                     while (!roundDone) {
 
                     }
-                    idPlayerTurn++;
                     roundDone = false;
                 }
-                smallRound++;
+                System.out.println("KONIEC RUNDY "+getSmallRound());
+                allPlayersDone = true;
             }
-            bigRound++;
+            System.out.println("KONIEC TURY "+getBigRound());
+            smallRoundsDone = true;
         }
+        bigRoundsDone = true;
+
+        System.out.println("KONIEC");
 
     }
 }

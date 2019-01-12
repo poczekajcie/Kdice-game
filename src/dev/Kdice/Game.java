@@ -93,7 +93,7 @@ public class Game {
     }
 
     public static String attack(String str) {
-        String result = "";
-        return result;
+
+        return "WYNIK";
     }
 }

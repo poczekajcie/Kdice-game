@@ -61,14 +61,6 @@ public class ServerThread extends Thread {
             e.printStackTrace();
         }
 
-        //Sending map length
-        try {
-            outputStream.print(Game.map.length);
-            outputStream.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         //Sending map
         if (Game.playersReady) {
             for (int i = 0; i< Game.map.length; i++) {
@@ -82,26 +74,72 @@ public class ServerThread extends Thread {
             }
         }
 
-        //Let the game begin
-        boolean pass = false;
+        while (!Server.bigRoundsDone) {
+            while (!Server.smallRoundsDone) {
 
-        while(Server.bigRound!=11) {
-            while (Server.smallRound != 101) {
                 //Waiting for turn
-                while (Server.idPlayerTurn != Game.findPlayerId(login)) {
-
-                }
-                // Attacking
-                while (!pass) {
-
-                    //Action will be here
-                    line = Game.attack("smth");
-
+                while (Server.getIdPlayerTurn() != Game.findPlayerId(login)) {
+                    try {
+                        sleep(1);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
 
-                pass = true;
+                try {
+                    outputStream.println("TWOJ RUCH");
+                    outputStream.flush();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                //Attack
+                try {
+                    outputStream.println("ATAK bla bla (ruch wykonuje gracz: "+login+")");
+                    outputStream.flush();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                //Sleep for synchro
+                try {
+                    sleep(600);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                //Signal that our thread is ready for next round
                 Server.roundDone = true;
+
+                //Waiting for all players done their rounds
+                while(!Server.allPlayersDone) {
+
+                }
+
+                //The end of small round
+                try {
+                    outputStream.println("KONIEC RUNDY");
+                    outputStream.flush();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
+
+            //The end of big round
+            try {
+                outputStream.println("TURA "+Server.getBigRound()+" <miejsce>");
+                outputStream.flush();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        //The end of the game
+        try {
+            outputStream.println("KONIEC");
+            outputStream.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }

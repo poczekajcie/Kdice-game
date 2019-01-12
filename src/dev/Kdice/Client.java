@@ -44,25 +44,17 @@ public class Client {
             e.printStackTrace();
         }
 
-        //Start
+        //Read the game
         try {
-            System.out.println(inputStream.readLine());
+            line = inputStream.readLine();
+            while (!line.equals("KONIEC")) {
+                System.out.println(line);
+                line = inputStream.readLine();
+            }
+            System.out.println(line);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        //Receiving a map length for loop
-        int mapLength = inputStream.read();
-
-        //Receiving a map
-        for (int i=0; i<mapLength; i++) {
-            try {
-                System.out.println(inputStream.readLine());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
 
     }
 }
