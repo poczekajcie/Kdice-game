@@ -29,7 +29,7 @@ public class ServerThread extends Thread {
 
         //Send a welcome message
         try {
-            outputStream.println("POLACZONO");
+            outputStream.println("(Server): POLACZONO");
             outputStream.flush();
         } catch (Exception e) {
             e.printStackTrace();
@@ -54,7 +54,7 @@ public class ServerThread extends Thread {
 
         //Sending message about start
         try {
-            line = "START "+ Game.findPlayerId(login)+" 1";
+            line = "(Server): START "+ Game.findPlayerId(login)+" 1";
             outputStream.println(line);
             outputStream.flush();
         } catch (Exception e) {
@@ -64,7 +64,7 @@ public class ServerThread extends Thread {
         //Sending map
         if (Game.playersReady) {
             for (int i = 0; i< Game.map.length; i++) {
-                line = "PLANSZA "+i+" "+Game.map[i].getOwnerId()+" "+Game.map[i].getCubes();
+                line = "(Server): PLANSZA "+i+" "+Game.map[i].getOwnerId()+" "+Game.map[i].getCubes();
                 try {
                     outputStream.println(line);
                     outputStream.flush();
@@ -74,8 +74,9 @@ public class ServerThread extends Thread {
             }
         }
 
-        while (!Server.bigRoundsDone) {
-            while (!Server.smallRoundsDone) {
+        //Let the game begin
+        for (int bigRound=1; bigRound<=2; bigRound++) {
+            for (int smallRound=1; smallRound<=3; smallRound++) {
 
                 //Waiting for turn
                 while (Server.getIdPlayerTurn() != Game.findPlayerId(login)) {
@@ -86,8 +87,9 @@ public class ServerThread extends Thread {
                     }
                 }
 
+                //Your turn
                 try {
-                    outputStream.println("TWOJ RUCH");
+                    outputStream.println("(Server): TWOJ RUCH");
                     outputStream.flush();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -95,7 +97,7 @@ public class ServerThread extends Thread {
 
                 //Attack
                 try {
-                    outputStream.println("ATAK bla bla (ruch wykonuje gracz: "+login+")");
+                    outputStream.println("("+login+"): "+"ATAK bla bla");
                     outputStream.flush();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -118,25 +120,30 @@ public class ServerThread extends Thread {
 
                 //The end of small round
                 try {
-                    outputStream.println("KONIEC RUNDY");
+                    outputStream.println("(Server): KONIEC RUNDY");
                     outputStream.flush();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+
             }
 
             //The end of big round
             try {
-                outputStream.println("TURA "+Server.getBigRound()+" <miejsce>");
+                outputStream.println("(Server): TURA "+Server.getBigRound()+" <miejsce>");
                 outputStream.flush();
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            //Set that i'm ready for next big round
+            Game.players[Game.findPlayerId(login)].setPlayerReadiness(true);
+
         }
 
         //The end of the game
         try {
-            outputStream.println("KONIEC");
+            outputStream.println("(Server): KONIEC");
             outputStream.flush();
         } catch (Exception e) {
             e.printStackTrace();

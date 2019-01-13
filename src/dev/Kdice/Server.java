@@ -56,30 +56,28 @@ public class Server {
         }
 
         //Let the game begin
-        int playersInGame = Game.players.length-1;
-
-        //do 11
         for (bigRound=1; bigRound<=2; bigRound++ ) {
-            //do 101
-            smallRoundsDone = false;
+            Game.resetPlayersReady();
             for (smallRound=1; smallRound<=3; smallRound++) {
-                allPlayersDone = false;
-                for (idPlayerTurn=1; idPlayerTurn<=playersInGame; idPlayerTurn++) {
+                for (idPlayerTurn=1; idPlayerTurn<=Game.players.length-1; idPlayerTurn++) {
                     while (!roundDone) {
 
                     }
+                    //If player set he has finished his round then set it to false for next
                     roundDone = false;
+                    //All players must done their rounds
+                    allPlayersDone = false;
                 }
                 System.out.println("KONIEC RUNDY "+getSmallRound());
                 allPlayersDone = true;
             }
             System.out.println("KONIEC TURY "+getBigRound());
-            smallRoundsDone = true;
+            //wait for players
+            while (!Game.isPlayersReady()) {
+
+            }
         }
-        bigRoundsDone = true;
-
         System.out.println("KONIEC");
-
     }
 }
 

@@ -27,6 +27,9 @@ public class Game {
             i+=1;
         }
         players[i].setLogin(login);
+        players[i].setEliminated(false);
+        players[i].setPlayerReadiness(false);
+        players[i].setPoints(0);
         System.out.println(players[i].getLogin() + " logged in");
     }
 
@@ -95,5 +98,20 @@ public class Game {
     public static String attack(String str) {
 
         return "WYNIK";
+    }
+
+    public static boolean isPlayersReady() {
+        boolean check = true;
+        for (int i=1; i<players.length; i++) {
+            if (!players[i].getPlayerReadiness()) {
+                check = false;
+            }
+        }
+        return check;
+    }
+    public static void resetPlayersReady() {
+        for (int i=1; i<players.length; i++) {
+            players[i].setPlayerReadiness(false);
+        }
     }
 }
