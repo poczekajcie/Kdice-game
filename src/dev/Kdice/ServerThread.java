@@ -75,11 +75,15 @@ public class ServerThread extends Thread {
         }
 
         //Let the game begin
+        String oldMessage, attackCommand;
         for (int bigRound=1; bigRound<=2; bigRound++) {
             for (int smallRound=1; smallRound<=3; smallRound++) {
 
                 //Waiting for turn
+                oldMessage = Server.message;
                 while (Server.getIdPlayerTurn() != Game.findPlayerId(login)) {
+                    oldMessage = getString(oldMessage);
+
                     try {
                         sleep(1);
                     } catch (InterruptedException e) {
@@ -96,8 +100,10 @@ public class ServerThread extends Thread {
                 }
 
                 //Attack
+                attackCommand = "("+login+"): "+"ATAK bla bla";
+                Server.message = attackCommand;
                 try {
-                    outputStream.println("("+login+"): "+"ATAK bla bla");
+                    outputStream.println(attackCommand);
                     outputStream.flush();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -114,8 +120,9 @@ public class ServerThread extends Thread {
                 Server.roundDone = true;
 
                 //Waiting for all players done their rounds
+                oldMessage = Server.message;
                 while(!Server.allPlayersDone) {
-
+                    oldMessage = getString(oldMessage);
                 }
 
                 //The end of small round
@@ -125,20 +132,17 @@ public class ServerThread extends Thread {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
-
             }
 
             //The end of big round
             try {
-                outputStream.println("(Server): TURA "+Server.getBigRound()+" <miejsce>");
+                outputStream.println("(Server): TURA "+bigRound+" <miejsce>");
                 outputStream.flush();
             } catch (Exception e) {
                 e.printStackTrace();
             }
             //Set that i'm ready for next big round
             Game.players[Game.findPlayerId(login)].setPlayerReadiness(true);
-
         }
 
         //The end of the game
@@ -149,5 +153,18 @@ public class ServerThread extends Thread {
             e.printStackTrace();
         }
 
+    }
+
+    private String getString(String oldMessage) {
+        if (!oldMessage.equals(Server.message)) {
+            try {
+                outputStream.println(Server.message);
+                outputStream.flush();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            oldMessage = Server.message;
+        }
+        return oldMessage;
     }
 }
