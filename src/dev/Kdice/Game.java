@@ -95,11 +95,6 @@ public class Game {
         }
     }
 
-    public static String attack(String str) {
-
-        return "WYNIK";
-    }
-
     public static boolean isPlayersReady() {
         boolean check = true;
         for (int i=1; i<players.length; i++) {
@@ -109,9 +104,46 @@ public class Game {
         }
         return check;
     }
+
     public static void resetPlayersReady() {
         for (int i=1; i<players.length; i++) {
             players[i].setPlayerReadiness(false);
         }
+    }
+
+    public static void addCubes() {
+        int cubesToAdd, fieldOnMap;
+        int[] playerFields = new int[25];
+        for (int i=1; i<players.length; i++) {
+            cubesToAdd = 0;
+            boolean isPossibleToAdd = true;
+            for (int j=0; j<map.length; j++) {
+                if (map[j].getOwnerId() == i) {
+                    playerFields[cubesToAdd] = j;
+                    cubesToAdd++;
+                }
+            }
+
+            while (cubesToAdd>0 && isPossibleToAdd) {
+                for (int k=0; k<map.length; k++) {
+                    if (map[k].getOwnerId() == i && map[k].getCubes() <8 ) {
+                        isPossibleToAdd = true;
+                        break;
+                    } else {
+                        isPossibleToAdd = false;
+                    }
+                }
+                fieldOnMap = playerFields[ThreadLocalRandom.current().nextInt(0, cubesToAdd)];
+                if (map[fieldOnMap].getCubes()<8) {
+                    map[fieldOnMap].setCubes(map[fieldOnMap].getCubes()+1);
+                    cubesToAdd--;
+                }
+            }
+        }
+    }
+
+    public static String attack(String str) {
+
+        return "WYNIK costam wyniki itd";
     }
 }

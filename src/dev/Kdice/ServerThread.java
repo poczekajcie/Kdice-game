@@ -63,19 +63,11 @@ public class ServerThread extends Thread {
 
         //Sending map
         if (Game.playersReady) {
-            for (int i = 0; i< Game.map.length; i++) {
-                line = "(Server): PLANSZA "+i+" "+Game.map[i].getOwnerId()+" "+Game.map[i].getCubes();
-                try {
-                    outputStream.println(line);
-                    outputStream.flush();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+            writeMap();
         }
 
         //Let the game begin
-        String oldMessage, attackCommand;
+        String oldMessage="", attackCommand="";
         for (int bigRound=1; bigRound<=2; bigRound++) {
             for (int smallRound=1; smallRound<=3; smallRound++) {
 
@@ -108,6 +100,16 @@ public class ServerThread extends Thread {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                while (!attackCommand.equals("PASS")) {
+                    attackCommand="PASS";
+                    try {
+                        outputStream.println(attackCommand);
+                        outputStream.flush();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
 
                 //Sleep for synchro
                 try {
@@ -132,6 +134,10 @@ public class ServerThread extends Thread {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+                //Wirte map with added cubes
+                writeMap();
+
             }
 
             //The end of big round
@@ -143,6 +149,7 @@ public class ServerThread extends Thread {
             }
             //Set that i'm ready for next big round
             Game.players[Game.findPlayerId(login)].setPlayerReadiness(true);
+
         }
 
         //The end of the game
@@ -153,6 +160,18 @@ public class ServerThread extends Thread {
             e.printStackTrace();
         }
 
+    }
+
+    private void writeMap() {
+        for (int i = 0; i< Game.map.length; i++) {
+            line = "(Server): PLANSZA "+i+" "+Game.map[i].getOwnerId()+" "+Game.map[i].getCubes();
+            try {
+                outputStream.println(line);
+                outputStream.flush();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private String getString(String oldMessage) {

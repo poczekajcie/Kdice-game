@@ -63,13 +63,15 @@ public class Server {
                     allPlayersDone = false;
                 }
                 System.out.println("KONIEC RUNDY "+smallRound);
+                Game.addCubes();
                 allPlayersDone = true;
             }
-            System.out.println("KONIEC TURY "+bigRound);
+
             //wait for players
             while (!Game.isPlayersReady()) {
 
             }
+            System.out.println("KONIEC TURY "+bigRound);
         }
         System.out.println("KONIEC");
     }
