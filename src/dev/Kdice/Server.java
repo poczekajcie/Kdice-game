@@ -72,6 +72,7 @@ public class Server {
 
             }
             System.out.println("KONIEC TURY "+bigRound);
+            Game.resetMap();
         }
         System.out.println("KONIEC");
     }

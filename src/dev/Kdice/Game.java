@@ -125,8 +125,8 @@ public class Game {
             }
 
             while (cubesToAdd>0 && isPossibleToAdd) {
-                for (int k=0; k<map.length; k++) {
-                    if (map[k].getOwnerId() == i && map[k].getCubes() <8 ) {
+                for (Field aMap : map) {
+                    if (aMap.getOwnerId() == i && aMap.getCubes() < 8) {
                         isPossibleToAdd = true;
                         break;
                     } else {
@@ -140,6 +140,17 @@ public class Game {
                 }
             }
         }
+    }
+
+    public static void resetMap() {
+        for (Player player : players) {
+            player.setPlayerReadiness(false);
+            player.setEliminated(false);
+        }
+        for (int i=0; i<map.length; i++) {
+            map[i] = new Field();
+        }
+        Game.setPlayers();
     }
 
     public static String attack(String str) {
