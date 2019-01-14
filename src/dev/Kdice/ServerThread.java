@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.Comparator;
+
 
 import static java.lang.Thread.*;
 
@@ -192,11 +194,11 @@ public class ServerThread extends Thread {
         }
 
         //The end of the game
-        //String summary[] = summary();
+        String summary[] = summary();
         String result="(Server): KONIEC";
-        /*for (int i=0; i<summary.length; i++) {
+        for (int i=0; i<summary.length; i++) {
             result = result + " " +summary[i];
-        }*/
+        }
         try {
             outputStream.println(result);
             outputStream.flush();
@@ -231,27 +233,35 @@ public class ServerThread extends Thread {
         return oldMessage;
     }
 
-    /*
     private String[] summary() {
-        String[] result = new String[11];
-        int[] resultPoints = new int[5];
-        int k=0;
+        String[] result = new String[10];
+        int[][] pointsId = new int[5][2];
 
         for (int i=1; i<Game.players.length; i++) {
-            resultPoints[i-1] = Game.players[i].getAllPoints();
+            pointsId[i-1][0] = Game.players[i].getAllPoints();
+            pointsId[i-1][1] = i;
         }
-        Arrays.sort(resultPoints);
-        for (int i=1; i<Game.players.length; i++) {
-            for (int j=0; j<resultPoints.length; j++) {
-                if (resultPoints[j]==Game.players[i].getAllPoints()) {
-                    result[k] = Game.players[i].getLogin();
+
+        Arrays.sort(pointsId, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] o1, int[] o2) {
+                return Integer.compare(o2[0], o1[0]);
+            }
+        });
+
+        int k=0;
+        for (int i=0; i<5; i++) {
+            for (int j=0; j<2; j++) {
+                if (j==1) {
+                    result[k] = Game.players[pointsId[i][j]].getLogin();
                     k++;
-                    result[k] = String.valueOf(resultPoints[j]);
+                } else {
+                    result[k] = String.valueOf(pointsId[i][j]);
                     k++;
                 }
             }
         }
         return result;
     }
-    */
+
 }
