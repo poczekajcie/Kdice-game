@@ -53,6 +53,7 @@ public class Server {
         for (int bigRound=1; bigRound<=2; bigRound++ ) {
             Game.resetPlayersReady();
             for (int smallRound=1; smallRound<=3; smallRound++) {
+
                 for (idPlayerTurn=1; idPlayerTurn<=Game.players.length-1; idPlayerTurn++) {
                     while (!roundDone) {
 

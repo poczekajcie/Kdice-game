@@ -67,7 +67,7 @@ public class ServerThread extends Thread {
         }
 
         //Let the game begin
-        String oldMessage="", attackCommand="";
+        String oldMessage="";
         for (int bigRound=1; bigRound<=2; bigRound++) {
             for (int smallRound=1; smallRound<=3; smallRound++) {
 
@@ -83,32 +83,74 @@ public class ServerThread extends Thread {
                     }
                 }
 
-                //Your turn
-                try {
-                    outputStream.println("(Server): TWOJ RUCH");
-                    outputStream.flush();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                //Can play only if it's not eliminated
+                if (!Game.players[Game.findPlayerId(login)].getPlayerIsEliminated()) {
 
-                //Attack
-                attackCommand = "("+login+"): "+"ATAK bla bla";
-                Server.message = attackCommand;
-                try {
-                    outputStream.println(attackCommand);
-                    outputStream.flush();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                while (!attackCommand.equals("PASS")) {
-                    attackCommand="PASS";
+                    //Your turn
                     try {
-                        outputStream.println(attackCommand);
+                        outputStream.println("(Server): TWOJ RUCH");
                         outputStream.flush();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
 
+                    //Attack
+                    String attackCommand="", attackResult="";
+                    while (!attackCommand.equals("PASS")) {
+                        //Check where player can attack
+                        int attackerField, fieldToAttack;
+                        int[] values = Game.whereCanIAttack(Game.findPlayerId(login));
+                        attackerField = values[0];
+                        fieldToAttack = values[1];
+
+                        //If we don't have move then PASS
+                        if (fieldToAttack == 99) {
+                            attackCommand = "PASS";
+                            try {
+                                outputStream.println(attackCommand);
+                                outputStream.flush();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            String winner;
+
+                            attackCommand = "(" + login + "): " + "ATAK " + attackerField + " " + fieldToAttack;
+                            Server.message = attackCommand;
+                            try {
+                                outputStream.println(attackCommand);
+                                outputStream.flush();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            attackResult = Game.attack(attackCommand);
+
+                            //Sleep for to a moment to refresh server messages
+                            try {
+                                sleep(10);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+                            Server.message = attackResult;
+                            try {
+                                outputStream.println(attackResult);
+                                outputStream.flush();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            if (Game.isOnlyOnePlayer()) {
+                                attackCommand = "PASS";
+                            }
+
+                            //If we lose then we pass
+                            winner = attackResult.substring(attackResult.lastIndexOf(" ")+1);
+                            if (Integer.parseInt(winner)!=Game.findPlayerId(login)) {
+                                attackCommand = "PASS";
+                            }
+                        }
+                    }
                 }
 
                 //Sleep for synchro
@@ -147,9 +189,9 @@ public class ServerThread extends Thread {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
             //Set that i'm ready for next big round
             Game.players[Game.findPlayerId(login)].setPlayerReadiness(true);
-
         }
 
         //The end of the game

@@ -153,8 +153,132 @@ public class Game {
         Game.setPlayers();
     }
 
-    public static String attack(String str) {
+    public static String attack(String attackCommand) {
 
-        return "WYNIK costam wyniki itd";
+        String result="WYNIK ";
+        int attackerField, fieldToAttack, random, attackerSum=0, toAttackSum=0;
+        String[] output = attackCommand.split(" ");
+
+        attackerField = Integer.parseInt(output[2]);
+        fieldToAttack = Integer.parseInt(output[3]);
+        int[] attackerRandoms = new int[map[attackerField].getCubes()];
+        int[] toAttackRandoms = new int[map[fieldToAttack].getCubes()];
+
+        result = result + map[attackerField].getOwnerId()+" "+map[attackerField].getCubes();
+        for (int i=1; i<map[attackerField].getCubes(); i++) {
+            random = ThreadLocalRandom.current().nextInt(1, 6);
+            attackerSum = attackerSum + random;
+            attackerRandoms[i-1]= random;
+        }
+        for (int i=0; i<attackerRandoms.length; i++) {
+            result = result + " " + attackerRandoms[i];
+        }
+
+        result = result + " " +map[fieldToAttack].getOwnerId()+" "+map[fieldToAttack].getCubes();
+        for (int i=1; i<map[fieldToAttack].getCubes(); i++) {
+            random = ThreadLocalRandom.current().nextInt(1, 6);
+            toAttackSum = toAttackSum + random;
+            toAttackRandoms[i-1]= random;
+        }
+        for (int i=0; i<toAttackRandoms.length; i++) {
+            result = result + " " + toAttackRandoms[i];
+        }
+
+        if (attackerSum > toAttackSum) {
+            result = result + " " + map[attackerField].getOwnerId();
+            int loserId = map[fieldToAttack].getOwnerId();
+            map[fieldToAttack].setOwnerId(map[attackerField].getOwnerId());
+            map[fieldToAttack].setCubes(map[attackerField].getCubes()-1);
+            map[attackerField].setCubes(1);
+            players[loserId].setEliminated(true);
+            for (int i=0; i<map.length; i++) {
+                if (map[i].getOwnerId()==loserId) {
+                    players[loserId].setEliminated(false);
+                }
+            }
+
+            //************************
+            //DODAC PUNKTY PRZEGRANEMU!!
+            //************************
+
+
+        } else {
+            result = result + " " + map[fieldToAttack].getOwnerId();
+            map[attackerField].setCubes(1);
+        }
+
+        return result;
     }
+
+    public static int[] whereCanIAttack(int playerId) {
+
+        //Count how many player has fields and write their numbers to table
+        int[] playerFields = new int[25];
+        int countPlayerFields=0, attackerField, fieldToAttack = 99, k, countOptions=0;
+        int[] fields = new int[2];
+        boolean good = false;
+
+        for (int i=0; i<map.length; i++) {
+            if (map[i].getOwnerId() == playerId) {
+                playerFields[countPlayerFields] = i;
+                countPlayerFields++;
+            }
+        }
+
+        //Take random player field and check if neighbors can be attacked
+        attackerField = playerFields[ThreadLocalRandom.current().nextInt(0, countPlayerFields)];
+        while(!good) {
+            switch (k=ThreadLocalRandom.current().nextInt(1, 4)) {
+                case 1:
+                    fieldToAttack = attackerField-1;
+                    countOptions++;
+                    break;
+                case 2:
+                    fieldToAttack = attackerField+1;
+                    countOptions++;
+                    break;
+                case 3:
+                    fieldToAttack = attackerField-5;
+                    countOptions++;
+                    break;
+                case 4:
+                    fieldToAttack = attackerField+5;
+                    countOptions++;
+                    break;
+            }
+            if (fieldToAttack>24 || fieldToAttack<0 || map[fieldToAttack].getOwnerId()==map[attackerField].getOwnerId()) {
+                good = false;
+            } else {
+                good = true;
+            }
+            if (countOptions>=4) {
+                //Flag that we don't have any move
+                fieldToAttack=99;
+                break;
+            }
+        }
+
+        fields[0] = attackerField;
+        fields[1] = fieldToAttack;
+
+        return fields;
+    }
+
+    public static boolean isOnlyOnePlayer() {
+
+        int check=0;
+        for (int i=1; i<players.length; i++) {
+            if (!players[i].getPlayerIsEliminated()) {
+                check++;
+            }
+        }
+
+        if (check>1) {
+            return false;
+        } else {
+            return true;
+        }
+
+    }
+
 }
