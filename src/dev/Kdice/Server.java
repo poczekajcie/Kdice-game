@@ -50,9 +50,9 @@ public class Server {
         }
 
         //Let the game begin
-        for (int bigRound=1; bigRound<=2; bigRound++ ) {
+        for (int bigRound=1; bigRound<=10; bigRound++ ) {
             Game.resetPlayersReady();
-            for (int smallRound=1; smallRound<=3; smallRound++) {
+            for (int smallRound=1; smallRound<=100; smallRound++) {
 
                 for (idPlayerTurn=1; idPlayerTurn<=Game.players.length-1; idPlayerTurn++) {
                     while (!roundDone) {

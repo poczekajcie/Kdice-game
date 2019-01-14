@@ -1,5 +1,6 @@
 package dev.Kdice;
 
+import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Game {
@@ -30,6 +31,7 @@ public class Game {
         players[i].setEliminated(false);
         players[i].setPlayerReadiness(false);
         players[i].setPoints(0);
+        players[i].setAllPoints(0);
         System.out.println(players[i].getLogin() + " logged in");
     }
 
@@ -123,22 +125,13 @@ public class Game {
                     cubesToAdd++;
                 }
             }
-
-            while (cubesToAdd>0 && isPossibleToAdd) {
-                for (Field aMap : map) {
-                    if (aMap.getOwnerId() == i && aMap.getCubes() < 8) {
-                        isPossibleToAdd = true;
-                        break;
-                    } else {
-                        isPossibleToAdd = false;
-                    }
-                }
+            for (int j=0; j<cubesToAdd; j++) {
                 fieldOnMap = playerFields[ThreadLocalRandom.current().nextInt(0, cubesToAdd)];
                 if (map[fieldOnMap].getCubes()<8) {
                     map[fieldOnMap].setCubes(map[fieldOnMap].getCubes()+1);
-                    cubesToAdd--;
                 }
             }
+
         }
     }
 
@@ -146,6 +139,7 @@ public class Game {
         for (Player player : players) {
             player.setPlayerReadiness(false);
             player.setEliminated(false);
+            player.setPoints(0);
         }
         for (int i=0; i<map.length; i++) {
             map[i] = new Field();
@@ -197,10 +191,20 @@ public class Game {
                 }
             }
 
-            //************************
-            //DODAC PUNKTY PRZEGRANEMU!!
-            //************************
+            if (players[loserId].getPlayerIsEliminated()) {
+                int pointsToGive=0;
+                for (int i=0; i<players.length; i++) {
+                    if (players[i].getPoints()>0) {
+                        pointsToGive++;
+                    }
+                }
+                players[loserId].setPoints(5-pointsToGive);
+                players[loserId].setAllPoints(players[loserId].getAllPoints()+5-pointsToGive);
+                if (isOnlyOnePlayer()) {
+                    players[attackerField].setPoints(1);
+                }
 
+            }
 
         } else {
             result = result + " " + map[fieldToAttack].getOwnerId();

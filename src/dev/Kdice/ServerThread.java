@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Arrays;
 
 import static java.lang.Thread.*;
 
@@ -68,19 +69,13 @@ public class ServerThread extends Thread {
 
         //Let the game begin
         String oldMessage="";
-        for (int bigRound=1; bigRound<=2; bigRound++) {
-            for (int smallRound=1; smallRound<=3; smallRound++) {
+        for (int bigRound=1; bigRound<=10; bigRound++) {
+            for (int smallRound=1; smallRound<=100; smallRound++) {
 
                 //Waiting for turn
                 oldMessage = Server.message;
                 while (Server.getIdPlayerTurn() != Game.findPlayerId(login)) {
                     oldMessage = getString(oldMessage);
-
-                    try {
-                        sleep(1);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
                 }
 
                 //Can play only if it's not eliminated
@@ -154,11 +149,13 @@ public class ServerThread extends Thread {
                 }
 
                 //Sleep for synchro
+
                 try {
-                    sleep(600);
+                    sleep(200);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+
 
                 //Signal that our thread is ready for next round
                 Server.roundDone = true;
@@ -184,7 +181,7 @@ public class ServerThread extends Thread {
 
             //The end of big round
             try {
-                outputStream.println("(Server): TURA "+bigRound+" <miejsce>");
+                outputStream.println("(Server): TURA "+bigRound+" "+Game.players[Game.findPlayerId(login)].getPoints());
                 outputStream.flush();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -195,8 +192,13 @@ public class ServerThread extends Thread {
         }
 
         //The end of the game
+        //String summary[] = summary();
+        String result="(Server): KONIEC";
+        /*for (int i=0; i<summary.length; i++) {
+            result = result + " " +summary[i];
+        }*/
         try {
-            outputStream.println("(Server): KONIEC");
+            outputStream.println(result);
             outputStream.flush();
         } catch (Exception e) {
             e.printStackTrace();
@@ -228,4 +230,28 @@ public class ServerThread extends Thread {
         }
         return oldMessage;
     }
+
+    /*
+    private String[] summary() {
+        String[] result = new String[11];
+        int[] resultPoints = new int[5];
+        int k=0;
+
+        for (int i=1; i<Game.players.length; i++) {
+            resultPoints[i-1] = Game.players[i].getAllPoints();
+        }
+        Arrays.sort(resultPoints);
+        for (int i=1; i<Game.players.length; i++) {
+            for (int j=0; j<resultPoints.length; j++) {
+                if (resultPoints[j]==Game.players[i].getAllPoints()) {
+                    result[k] = Game.players[i].getLogin();
+                    k++;
+                    result[k] = String.valueOf(resultPoints[j]);
+                    k++;
+                }
+            }
+        }
+        return result;
+    }
+    */
 }
